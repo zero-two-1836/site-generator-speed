@@ -1029,8 +1029,8 @@ function build(input) {
     reading_minutes: Math.max(1, Math.ceil(wordsOf(s.body) / 200)),
     tags: s.tagRefs.map((t) => ({ name: t.name, slug: t.slug, url: t.url })),
   });
-  const pageOf = (s) => ({
-    ...cardOf(s),
+  const pageOf = (s, card) => ({
+    ...(card ?? cardOf(s)),
     slug: s.slug,
     content: s.html,
     toc: s.toc.map((h) => ({ level: h.level, id: h.id, html: h.html })),
@@ -1051,7 +1051,7 @@ function build(input) {
       const nodes = templates.get(name);
       return nodes === undefined ? null : renderNodes(nodes, { vars: { site, tags: allTags, recent, ...vars }, parent: null }, ctx, 0);
     };
-    for (const s of kept) output[`${s.outDir}/index.html`] = render(s.layout, { page: pageOf(s) });
+    for (const s of kept) output[`${s.outDir}/index.html`] = render(s.layout, { page: pageOf(s, cards.get(s)) });
     const per = input.site.per_page;
     const pages = Math.max(1, Math.ceil(posts.length / per));
     const indexUrl = (k) => (k === 1 ? `${base}/` : `${base}/page/${k}/`);
